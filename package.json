@@ -1,0 +1,13 @@
+{
+  "name": "web--battleship",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "tsc": "tsc"
+  },
+  "devDependencies": {
+    "jest": "^21.2.1"
+  }
+}
