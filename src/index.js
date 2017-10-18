@@ -19,6 +19,14 @@
 // Submarine (3)
 // Destroyer (2)
 
+// NOTE
+// The meat of the API is in a file called `functions.js`.
+// The classes in this file represent the domain models 
+// that I'd use to build out the game played if it was played 
+// in the terminal. Implementing the game is outside the scope 
+// of the exercise as I understand it, but if that's something 
+// you want I'd be happy to do so.
+
 const readline = require('readline');
 
 var { 
@@ -39,9 +47,13 @@ class Player {
 
   placeBoats(boats) {
     boats.forEach((size, boat) => {
-      // TODO: select boat placement using placeShipVertically or placeShipHorizontally
+      // delegate to placeShipVertically or placeShipHorizontally
     });
   }
+
+  takeTurn(coordinates) {
+    // delegate to fire()
+  } 
 }
 
 class Game {
@@ -75,10 +87,8 @@ class Game {
 
   play() {
     // ---- Loop ----
-    //    - Player 1 take turn using fire()
-    //    - Check if player 2 lost using hasShipsRemaining
-    //    - Player 2 fire()
-    //    - Check if player 1 lost using hasShipsRemaining
+    //    - Take turn using fire()
+    //    - Check if opposing player lost using hasShipsRemaining
     //    - if game over, announce winner
   }
 }
@@ -116,6 +126,8 @@ class Launcher {
   }
 
   launch() {
+    throw new Error('NOT IMPLEMENTED. Please view `functions.js` to view view the meat of the API.');
+
     this.io
       .on('line', this.handleLine)
       .on('close', this.handleClose);
