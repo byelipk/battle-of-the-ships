@@ -5,11 +5,8 @@ const HIT_TILE = "*";
 
 ////////////////////////////
 
-function buildGrid() {
+function buildGrid(rows=10, cols=10) {
   var grid = [];
-
-  const rows = 10;
-  const cols = 10;
 
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
@@ -25,9 +22,9 @@ function buildGrid() {
 }
 
 function placeShipHorizontally(grid, options) {
-  if (options.row === undefined) { throw new Error('You must pass `row` property in options hash.' ) }
-  if (options.col === undefined) { throw new Error('You must pass `col` property in options hash.' ) }
-  if (options.size === undefined) { throw new Error('You must pass `size` property in options hash.' ) }
+  validate("row", options, 'You must pass `row` property in options hash.');
+  validate("col", options, 'You must pass `col` property in options hash.');
+  validate("size", options, 'You must pass `size` property in options hash.');
 
   const returngrid = Object.assign([], grid);
 
@@ -46,9 +43,9 @@ function placeShipHorizontally(grid, options) {
 }
 
 function placeShipVertically(grid, options) {
-  if (options.row === undefined) { throw new Error('You must pass `row` property in options hash.' ) }
-  if (options.col === undefined) { throw new Error('You must pass `col` property in options hash.' ) }
-  if (options.size === undefined) { throw new Error('You must pass `size` property in options hash.' ) }
+  validate("row", options, 'You must pass `row` property in options hash.');
+  validate("col", options, 'You must pass `col` property in options hash.');
+  validate("size", options, 'You must pass `size` property in options hash.');
 
   const returngrid = Object.assign([], grid);
 
@@ -67,8 +64,8 @@ function placeShipVertically(grid, options) {
 }
 
 function fire(grid, options) {
-  if (options.row === undefined) { throw new Error('You must pass `row` property in options hash.' ) }
-  if (options.col === undefined) { throw new Error('You must pass `col` property in options hash.' ) }
+  validate("row", options, 'You must pass `row` property in options hash.');
+  validate("col", options, 'You must pass `col` property in options hash.');
 
   const returngrid = Object.assign([], grid);
 
@@ -130,6 +127,12 @@ function drawBoard(grid) {
 
   console.log();
   console.log(contents);
+}
+
+function validate(property, options, msg) {
+  if (options.hasOwnProperty(property) === false) {
+    throw new Error(msg);
+  }
 }
 
 
