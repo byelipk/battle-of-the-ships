@@ -1,6 +1,6 @@
-const EMPTY_TILE = 0;
-const SHIP_TILE = "#";
-const HIT_TILE = "*";
+const EMPTY_TILE = Object.freeze(0);
+const SHIP_TILE  = Object.freeze("#");
+const HIT_TILE   = Object.freeze("*");
 
 
 ////////////////////////////
@@ -26,17 +26,16 @@ function placeShipHorizontally(grid, options) {
   validate("col", options, 'You must pass `col` property in options hash.');
   validate("size", options, 'You must pass `size` property in options hash.');
 
-  const returngrid = Object.assign([], grid);
-
-  const row = options.row;
-  const limit = options.col + options.size;
+  var returngrid = Object.assign([], grid);
+  const row = Object.freeze(options.row);
+  var limit = options.col + options.size;
 
   for (let col = options.col; col < limit; col += 1) {
     if (returngrid[row][col] === EMPTY_TILE) {
       returngrid[row][col] = SHIP_TILE;
     }
     else {
-      throw new Error(`Ship already placed at coordinates: (${row},${col})`);
+      throw new Error(`Error placing ship at coordinates: (${row},${col})`);
     }
   }
   return returngrid;
@@ -47,17 +46,17 @@ function placeShipVertically(grid, options) {
   validate("col", options, 'You must pass `col` property in options hash.');
   validate("size", options, 'You must pass `size` property in options hash.');
 
-  const returngrid = Object.assign([], grid);
+  var returngrid = Object.assign([], grid);
 
-  const col = options.col;
-  const limit = options.row + options.size;
+  const col = Object.freeze(options.col);
+  var limit = options.row + options.size;
 
   for (let row = options.row; row < limit; row += 1) {
     if (returngrid[row][col] === EMPTY_TILE) {
       returngrid[row][col] = SHIP_TILE;
     }
     else {
-      throw new Error(`Ship already placed at coordinates: (${row},${col})`);
+      throw new Error(`Error placing ship at coordinates: (${row},${col})`);
     }
   }
   return returngrid;
@@ -67,10 +66,10 @@ function fire(grid, options) {
   validate("row", options, 'You must pass `row` property in options hash.');
   validate("col", options, 'You must pass `col` property in options hash.');
 
-  const returngrid = Object.assign([], grid);
+  var returngrid = Object.assign([], grid);
 
-  const row = options.row;
-  const col = options.col;
+  const row = Object.freeze(options.row);
+  const col = Object.freeze(options.col);
 
   if (returngrid[row][col] === EMPTY_TILE) {
     return { result: "MISS", grid: returngrid, row: row, col: col };
@@ -100,7 +99,7 @@ function hasShipsRemaining(grid) {
 function drawBoard(grid) {
   var contents = "";
 
-  const border = {
+  const border = Object.freeze({
     1: 'A', 
     2: 'B', 
     3: 'C', 
@@ -111,11 +110,11 @@ function drawBoard(grid) {
     8: 'H', 
     9: 'I', 
     10: 'J'
-  }
+  });
 
   // Add headers
-  contents = contents + "   1 2 3 4 5 6 7 8 9 10\n";
-  contents = contents + "   --------------------\n";
+  contents = contents + "   0 1 2 3 4 5 6 7 8 9\n";
+  contents = contents + "   -------------------\n";
 
   for(let row = 0; row < grid.length; row += 1) {
     contents = contents + border[row+1] + "  "; // Add row heading 

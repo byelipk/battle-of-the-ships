@@ -7,7 +7,7 @@ var {
 } = require("../src/functions");
 
 test("buildGrid works", () => {
-  const grid = buildGrid();
+  var grid = buildGrid();
 
   const expected = [
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -26,9 +26,9 @@ test("buildGrid works", () => {
 });
 
 test("placeShipHorizontally works", () => {
-  const grid = buildGrid();
+  var grid = buildGrid();
 
-  const expected = [
+  var expected = [
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -41,13 +41,19 @@ test("placeShipHorizontally works", () => {
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
   ];
 
-  const result = placeShipHorizontally(grid, {row: 3, col: 0, size: 5})
+  var result = placeShipHorizontally(grid, {row: 3, col: 0, size: 5})
 
   expect(result).toEqual(expected);
 });
 
+test("invalid coordinates for placeShipHorizontally", () => {
+  var grid = buildGrid();
+
+  expect(() => { placeShipHorizontally(grid, {row: -1, col: 0, size: 5}) }).toThrow();
+});
+
 test("placeShipVertically works", () => {
-  const grid = buildGrid();
+  var grid = buildGrid();
 
   const expected = [
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -62,13 +68,13 @@ test("placeShipVertically works", () => {
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
   ];
 
-  const result = placeShipVertically(grid, {row: 2, col: 5, size: 3})
+  var result = placeShipVertically(grid, {row: 2, col: 5, size: 3})
 
   expect(result).toEqual(expected);
 });
 
 test('ships cannot overlap', () => {
-  const grid = buildGrid();
+  var grid = buildGrid();
 
   placeShipVertically(grid, {row: 0, col: 0, size: 5});
 
@@ -77,7 +83,7 @@ test('ships cannot overlap', () => {
 });
 
 test('firing on a ship works', () => {
-  const grid = buildGrid();
+  var grid = buildGrid();
   
   placeShipVertically(grid, {row: 0, col: 0, size: 5});
 
