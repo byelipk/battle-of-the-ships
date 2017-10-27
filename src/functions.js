@@ -2,8 +2,7 @@ const EMPTY_TILE = Object.freeze(0);
 const SHIP_TILE  = Object.freeze("#");
 const HIT_TILE   = Object.freeze("*");
 
-
-////////////////////////////
+// FUNCTIONS ************************************
 
 function buildGrid(rows=10, cols=10) {
   var grid = [];
@@ -22,9 +21,9 @@ function buildGrid(rows=10, cols=10) {
 }
 
 function placeShipHorizontally(grid, options) {
-  validate("row", options, 'You must pass `row` property in options hash.');
-  validate("col", options, 'You must pass `col` property in options hash.');
-  validate("size", options, 'You must pass `size` property in options hash.');
+  validate("row", options);
+  validate("col", options);
+  validate("size", options);
 
   var returngrid = Object.assign([], grid);
   const row = Object.freeze(options.row);
@@ -35,16 +34,16 @@ function placeShipHorizontally(grid, options) {
       returngrid[row][col] = SHIP_TILE;
     }
     else {
-      throw new Error(`Error placing ship at coordinates: (${row},${col})`);
+      throw new Error(`Error placing ship horizontally at coordinates: (${row},${col})`);
     }
   }
   return returngrid;
 }
 
 function placeShipVertically(grid, options) {
-  validate("row", options, 'You must pass `row` property in options hash.');
-  validate("col", options, 'You must pass `col` property in options hash.');
-  validate("size", options, 'You must pass `size` property in options hash.');
+  validate("row", options);
+  validate("col", options);
+  validate("size", options);
 
   var returngrid = Object.assign([], grid);
 
@@ -56,15 +55,15 @@ function placeShipVertically(grid, options) {
       returngrid[row][col] = SHIP_TILE;
     }
     else {
-      throw new Error(`Error placing ship at coordinates: (${row},${col})`);
+      throw new Error(`Error placing ship vertically at coordinates: (${row},${col})`);
     }
   }
   return returngrid;
 }
 
 function fire(grid, options) {
-  validate("row", options, 'You must pass `row` property in options hash.');
-  validate("col", options, 'You must pass `col` property in options hash.');
+  validate("row", options);
+  validate("col", options);
 
   var returngrid = Object.assign([], grid);
 
@@ -95,6 +94,8 @@ function hasShipsRemaining(grid) {
   }
   return false;
 }
+
+// SIDE EFFECTS ************************************
 
 function drawBoard(grid) {
   var contents = "";
@@ -128,12 +129,16 @@ function drawBoard(grid) {
   console.log(contents);
 }
 
-function validate(property, options, msg) {
+// VALIDATIONS ************************************
+
+function validate(property, options) {
   if (options.hasOwnProperty(property) === false) {
-    throw new Error(msg);
+    throw new Error(`You must pass ${property} property in options hash.`);
   }
 }
 
+
+// EXPORTS ************************************
 
 module.exports = {
   buildGrid,
