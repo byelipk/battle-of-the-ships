@@ -74,7 +74,7 @@ function fire(grid, options) {
     return { result: "MISS", grid: returngrid, row: row, col: col };
   }
   
-  if (returngrid[col][row] === HIT_TILE) {
+  if (returngrid[row][col] === HIT_TILE) {
     return { result: "ALREADY HIT", grid: returngrid, row: row, col: col };
   }
 

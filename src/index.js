@@ -27,7 +27,20 @@
 // of the exercise as I understand it, but if that's something 
 // you want I'd be happy to do so.
 
-const readline = require('readline');
+var readlineSync = require('readline-sync');
+
+const mapLettersToIndex = Object.freeze({
+  'a': 0,
+  'b': 1,
+  'c': 2,
+  'd': 3,
+  'e': 4,
+  'f': 5,
+  'g': 6,
+  'h': 7,
+  'i': 8,
+  'j': 9
+});
 
 var { 
   buildGrid, 
@@ -36,7 +49,7 @@ var {
   fire,
   hasShipsRemaining,
   drawBoard
-} = require("../src/functions");
+} = require("./functions");
 
 class Player {
   constructor(name, io) {
@@ -46,27 +59,54 @@ class Player {
   }
 
   placeBoats(boats) {
-    boats.forEach((size, boat) => {
-      // delegate to placeShipVertically or placeShipHorizontally
-    });
+    console.log(`Placing boats for ${this.name}`);
+
+    this.board = placeShipHorizontally(this.board, {row: 0, col: 0, size: boats.get('carrier')});
+    this.board = placeShipVertically(this.board, {row: 2, col: 0, size: boats.get('battleship')});
+    this.board = placeShipHorizontally(this.board, {row: 8, col: 5, size: boats.get('submarine')});
+    this.board = placeShipVertically(this.board, {row: 5, col: 3, size: boats.get('cruiser')});
+    this.board = placeShipHorizontally(this.board, {row: 9, col: 7, size: boats.get('destroyer')});
+
+    drawBoard(this.board);
   }
 
-  takeTurn(coordinates) {
+  takeTurn(opponent) {
     // delegate to fire()
+    var input = this.io.question("Enter (x/y) coordinates to attack: ");
+
+    var coordinates = input.trim().split(/ /);
+
+    if (coordinates.length !== 2) {
+      throw new Error("Invalid coordinates.");
+    } 
+
+    var xCoord = mapLettersToIndex[coordinates[0]];
+    var yCoord = parseInt(coordinates[1], 10);
+
+    // validate input
+    if (xCoord === undefined) {
+      throw new Error("Invalid x coordinate. Must be letter from a-j.");
+    }
+
+    if (Number.isNaN(yCoord) || (yCoord < 0 || yCoord > 9)) {
+      throw new Error("Invalid y coordinate. Must be number from 0-9.");
+    }
+
+    return fire(opponent.board, { row: xCoord, col: yCoord });
   } 
 }
 
 class Game {
 
   constructor(io) {
-    this.io = io;
+    this.io = readlineSync;
     this.ships = this.selectShips();
     this.player1 = new Player("Player 1", this.io);
     this.player2 = new Player("Player 2", this.io);
   }
 
   selectShips() {
-    const ships = new Map();
+    var ships = new Map();
     
     ships.set('carrier', 5);
     ships.set('battleship', 4);
@@ -79,10 +119,12 @@ class Game {
 
   start() {
     // - Place boats for player 1
-    // this.player1.placeBoats(this.ships);
+    this.player1.placeBoats(this.ships);
 
     // - Place boats for player 2
-    // this.player1.placeBoats(this.ships);
+    this.player2.placeBoats(this.ships);
+
+    this.play();
   }
 
   play() {
@@ -90,14 +132,39 @@ class Game {
     //    - Take turn using fire()
     //    - Check if opposing player lost using hasShipsRemaining
     //    - if game over, announce winner
+
+    console.log("Ok, let's play!");
+    console.log("Player1, you get unlimited shots at Player2! 😁");
+    console.log("To enter the coordinates to attack, press any key from [a-j]. followed by a space, followed by any key from [0-9].")
+
+    var gameOver = false;
+    var currentPlayer = this.player1;
+    var defendingPlayer = this.player2;
+
+    while (gameOver === false) {
+      try {
+        var damageAssessment = currentPlayer.takeTurn(defendingPlayer);
+        defendingPlayer.board = damageAssessment.grid;
+
+        if (hasShipsRemaining(defendingPlayer.board) === false) {
+          console.log("YOU WIN!!!!!!!");
+          console.log("GAME OVER!!!");
+          gameOver = true;
+        }
+        else {
+          console.log(damageAssessment.result, damageAssessment.row, damageAssessment.col);
+        }
+      } catch (e) {
+        console.error(e.message);
+      }
+    }
   }
 }
 
 class Launcher {
 
   constructor() {
-    // TODO: Convert to using readline-sync
-    this.io = readline.createInterface({ input: process.stdin, output: process.stdout });
+    this.io = readlineSync;
     this.game = new Game(this.io);
     this.status = 0;
 
@@ -106,13 +173,7 @@ class Launcher {
   }
 
   handleLine(line) {
-    if (this.status === 0) {
-      this.game.start(line);
-    }
-    else {
-      this.status = 1;
-      this.game.play(line);
-    }
+    this.game.play(line);
   }
 
   handleClose() {
@@ -120,22 +181,23 @@ class Launcher {
   }
 
   deliverWelcomeMessage() {
-    console.log(`
-    Welcome to Battleship! 🚢
-    Are you ready to play? (y/n) `);
+    console.log(`Welcome to Battleship! 🚢`);
   }
 
   launch() {
-    throw new Error('NOT IMPLEMENTED. Please view `functions.js` to view view the meat of the API.');
-
-    this.io
-      .on('line', this.handleLine)
-      .on('close', this.handleClose);
-
-    
     this.deliverWelcomeMessage();
+    
+    if (this.io.keyInYN("Are you ready to play?")) {
+      this.startGame();
+    }
+    else {
+      console.log('Bye now!');
+    }
+  }
 
-    this.io.prompt();
+  startGame() {
+    this.status = 1;
+    this.game.start();
   }
 }
 
